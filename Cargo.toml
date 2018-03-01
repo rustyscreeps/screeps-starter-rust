@@ -1,0 +1,15 @@
+[package]
+name = "screeps-starter-rust"
+version = "0.0.0"
+authors = []
+
+[dependencies]
+stdweb = "0.4"
+log = "0.4"
+fern = "0.5"
+screeps-game-api = "0.0.2"
+
+[profile.release]
+panic = "abort"
+opt-level = "s"
+lto = true
