@@ -7,7 +7,7 @@ authors = []
 stdweb = "0.4"
 log = "0.4"
 fern = "0.5"
-screeps-game-api = "0.0.2"
+screeps-game-api = "0.0.8"
 
 [profile.release]
 panic = "abort"
