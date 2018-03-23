@@ -3,6 +3,8 @@
 Starter Rust AI for Screeps, the JavaScript-based MMO game
 
 This uses tooling located at https://github.com/daboross/screeps-in-rust-via-wasm/.
+I'd recommend using `cargo-screeps` for uploading the code, but it should compile
+fine just using `cargo-web` provided by the `stdweb` project.
 
 The documentation is currently a bit sparse. API docs which list functions one
 can use are located at https://docs.rs/screeps-game-api/.
