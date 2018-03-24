@@ -1,3 +1,4 @@
+#![recursion_limit = "128"]
 extern crate fern;
 #[macro_use]
 extern crate log;
@@ -12,12 +13,34 @@ mod logging;
 use screeps::{Part, ReturnCode};
 use screeps::{find, RoomObjectProperties};
 
+use screeps::prelude::*;
+
 fn main() {
     stdweb::initialize();
     logging::setup_logging(logging::Info);
 
     js! {
-        module.exports.loop = @{game_loop};
+        var game_loop = @{game_loop};
+
+        module.exports.loop = function() {
+            // Provide actual error traces.
+            try {
+                game_loop();
+            } catch (error) {
+                // console_error function provided by 'screeps-game-api'
+                console_error("caught exception:", error);
+                if (error.stack) {
+                    console_error("stack trace:", error.stack);
+                }
+                console_error("resetting VM next tick.");
+                // reset the VM since we don't know if everything was cleaned up and don't
+                // want an inconsistent state.
+                module.exports.loop = function() {
+                    __initialize(new WebAssembly.Module(require("compiled")), false);
+                    module.exports.loop();
+                }
+            }
+        }
     }
 }
 
@@ -70,13 +93,13 @@ fn game_loop() {
 
         if creep.memory().bool("harvesting") {
             let source = &creep.room().find(find::SOURCES)[0];
-            if creep.pos().is_near_to(&source) {
-                let r = creep.harvest(&source);
+            if creep.pos().is_near_to(source) {
+                let r = creep.harvest(source);
                 if r != ReturnCode::Ok {
                     warn!("couldn't harvest: {:?}", r);
                 }
             } else {
-                creep.move_to(&source);
+                creep.move_to(source);
             }
         } else {
             if let Some(c) = creep.room().controller() {
