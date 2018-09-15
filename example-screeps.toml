@@ -1,8 +1,13 @@
+default_deploy_mode = "upload"
+
+[upload]
 username = "your username or email"
 password = "your password"
 branch = "default"
-# optional:
 # ptr = false
 # hostname = "screeps.com"
 # ssl = true
 # port = 443
+
+# for full syntax, see
+# https://github.com/daboross/screeps-in-rust-via-wasm/blob/master/screeps-defaults.toml
