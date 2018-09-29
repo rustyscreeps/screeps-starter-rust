@@ -6,14 +6,11 @@ extern crate screeps;
 #[macro_use]
 extern crate stdweb;
 
-use std::collections::HashSet;
-
 mod logging;
 
-use screeps::{Part, ReturnCode};
-use screeps::{find, RoomObjectProperties};
+use std::collections::HashSet;
 
-use screeps::prelude::*;
+use screeps::{find, prelude::*, Part, ReturnCode, RoomObjectProperties};
 
 fn main() {
     stdweb::initialize();
