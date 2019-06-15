@@ -32,10 +32,7 @@ fn main() {
                 console_error("resetting VM next tick.");
                 // reset the VM since we don't know if everything was cleaned up and don't
                 // want an inconsistent state.
-                module.exports.loop = function() {
-                    __initialize(new WebAssembly.Module(require("compiled")), false);
-                    module.exports.loop();
-                }
+                module.exports.loop = wasm_initialize;
             }
         }
     }
