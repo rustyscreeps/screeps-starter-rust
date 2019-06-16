@@ -1,17 +1,13 @@
-use fern;
-use log;
-use screeps;
-
 pub use log::LevelFilter::*;
 
 struct JsLog;
 struct JsNotify;
 
 impl log::Log for JsLog {
-    fn enabled(&self, _: &log::Metadata) -> bool {
+    fn enabled(&self, _: &log::Metadata<'_>) -> bool {
         true
     }
-    fn log(&self, record: &log::Record) {
+    fn log(&self, record: &log::Record<'_>) {
         let message = format!("{}", record.args());
         js! {
             console.log(@{message});
@@ -20,10 +16,10 @@ impl log::Log for JsLog {
     fn flush(&self) {}
 }
 impl log::Log for JsNotify {
-    fn enabled(&self, _: &log::Metadata) -> bool {
+    fn enabled(&self, _: &log::Metadata<'_>) -> bool {
         true
     }
-    fn log(&self, record: &log::Record) {
+    fn log(&self, record: &log::Record<'_>) {
         let message = format!("{}", record.args());
         js! {
             Game.notify(@{message});
@@ -43,7 +39,7 @@ pub fn setup_logging(verbosity: log::LevelFilter) {
                 message
             ))
         })
-        .chain(Box::new(JsLog) as Box<log::Log>)
+        .chain(Box::new(JsLog) as Box<dyn log::Log>)
         .chain(
             fern::Dispatch::new()
                 .level(log::LevelFilter::Warn)
@@ -51,7 +47,7 @@ pub fn setup_logging(verbosity: log::LevelFilter) {
                     let time = screeps::game::time();
                     out.finish(format_args!("[{}] {}", time, message))
                 })
-                .chain(Box::new(JsNotify) as Box<log::Log>),
+                .chain(Box::new(JsNotify) as Box<dyn log::Log>),
         )
         .apply()
         .expect("expected setup_logging to only ever be called once per instance");

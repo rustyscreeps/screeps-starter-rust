@@ -1,8 +1,4 @@
 #![recursion_limit = "128"]
-extern crate fern;
-#[macro_use]
-extern crate log;
-extern crate screeps;
 #[macro_use]
 extern crate stdweb;
 
@@ -10,6 +6,7 @@ mod logging;
 
 use std::collections::HashSet;
 
+use log::*;
 use screeps::{find, prelude::*, Part, ReturnCode, RoomObjectProperties};
 
 fn main() {
@@ -119,7 +116,7 @@ fn game_loop() {
     info!("done! cpu: {}", screeps::game::cpu::get_used())
 }
 
-fn cleanup_memory() -> Result<(), Box<::std::error::Error>> {
+fn cleanup_memory() -> Result<(), Box<dyn ::std::error::Error>> {
     let alive_creeps: HashSet<String> = screeps::game::creeps::keys().into_iter().collect();
 
     let screeps_memory = match screeps::memory::root().dict("creeps")? {
