@@ -48,10 +48,10 @@ fn game_loop() {
 
         if spawn.energy() >= body.iter().map(|p| p.cost()).sum() {
             // create a unique name, spawn.
-            let mut name = screeps::game::time();
+            let name_base = screeps::game::time();
             let mut additional = 0;
             let res = loop {
-                let name = format!("{}-{}", name, additional);
+                let name = format!("{}-{}", name_base, additional);
                 let res = spawn.spawn_creep(&body, &name);
 
                 if res == ReturnCode::NameExists {
