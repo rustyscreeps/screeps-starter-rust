@@ -1,13 +1,11 @@
 #![recursion_limit = "128"]
-#[macro_use]
-extern crate stdweb;
-
 mod logging;
 
 use std::collections::HashSet;
 
 use log::*;
 use screeps::{find, prelude::*, Part, ReturnCode, RoomObjectProperties};
+use stdweb::{_js_impl, js};
 
 fn main() {
     stdweb::initialize();
