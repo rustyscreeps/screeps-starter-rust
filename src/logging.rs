@@ -1,3 +1,5 @@
+use stdweb::{_js_impl, js};
+
 pub use log::LevelFilter::*;
 
 struct JsLog;
