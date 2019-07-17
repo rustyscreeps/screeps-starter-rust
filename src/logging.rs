@@ -1,4 +1,4 @@
-use stdweb::{_js_impl, js};
+use stdweb::js;
 
 pub use log::LevelFilter::*;
 
