@@ -1,11 +1,10 @@
-#![recursion_limit = "128"]
-mod logging;
-
 use std::collections::HashSet;
 
 use log::*;
 use screeps::{find, prelude::*, Part, ReturnCode, RoomObjectProperties};
-use stdweb::{_js_impl, js};
+use stdweb::js;
+
+mod logging;
 
 fn main() {
     stdweb::initialize();
