@@ -1,3 +1,4 @@
+#![recursion_limit = "128"]
 use std::collections::HashSet;
 
 use log::*;
@@ -113,7 +114,7 @@ fn game_loop() {
     info!("done! cpu: {}", screeps::game::cpu::get_used())
 }
 
-fn cleanup_memory() -> Result<(), Box<dyn ::std::error::Error>> {
+fn cleanup_memory() -> Result<(), Box<dyn std::error::Error>> {
     let alive_creeps: HashSet<String> = screeps::game::creeps::keys().into_iter().collect();
 
     let screeps_memory = match screeps::memory::root().dict("creeps")? {
