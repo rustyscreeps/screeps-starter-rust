@@ -1,4 +1,3 @@
-#![recursion_limit = "128"]
 use std::collections::HashSet;
 
 use log::*;
@@ -8,7 +7,6 @@ use stdweb::js;
 mod logging;
 
 fn main() {
-    stdweb::initialize();
     logging::setup_logging(logging::Info);
 
     js! {
