@@ -1,10 +1,11 @@
 # screeps-starter-rust
 
-Starter Rust AI for Screeps, the JavaScript-based MMO game
+Starter Rust AI for [Screeps][screeps], the JavaScript-based MMO game.
 
-This uses tooling located at https://github.com/daboross/screeps-in-rust-via-wasm/.
-I'd recommend using `cargo-screeps` for uploading the code, but it should compile
-fine just using `cargo-web` provided by the `stdweb` project.
+This uses the [`screeps-game-api`] bindings from the [rustyscreeps] organization.
+
+It's also recommended to use [`cargo-screeps`] for uploading the code, but the code should still
+compile if using [`cargo-web`] directly instead.
 
 The documentation is currently a bit sparse. API docs which list functions one
 can use are located at https://docs.rs/screeps-game-api/.
@@ -20,7 +21,7 @@ Quickstart:
 ```sh
 # clone:
 
-git clone https://github.com/daboross/screeps-starter-rust.git
+git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
 rustup override set nightly
 
@@ -40,3 +41,8 @@ cargo screeps --help
 ```
 
 [screeps]: https://screeps.com/
+[`stdweb`]: https://github.com/koute/stdweb
+[`cargo-web`]: https://github.com/koute/cargo-web
+[`cargo-screeps`]: https://github.com/rustyscreeps/cargo-screeps/
+[`screeps-game-api`]: https://github.com/rustyscreeps/screeps-game-api/
+[rustyscreeps]: https://github.com/rustyscreeps/
