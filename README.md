@@ -28,7 +28,6 @@ rustup override set nightly
 # cli dependencies:
 
 cargo install cargo-screeps
-cargo install cargo-web
 
 # configure for uploading:
 
