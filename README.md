@@ -23,7 +23,6 @@ Quickstart:
 
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
-rustup override set nightly
 
 # cli dependencies:
 
