@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use log::*;
-use screeps::{find, prelude::*, Part, ReturnCode, RoomObjectProperties};
+use screeps::{find, prelude::*, Part, ResourceType, ReturnCode, RoomObjectProperties};
 use stdweb::js;
 
 mod logging;
@@ -69,11 +69,11 @@ fn game_loop() {
         }
 
         if creep.memory().bool("harvesting") {
-            if creep.carry_total() == creep.carry_capacity() {
+            if creep.store_free_capacity(Some(ResourceType::Energy)) == 0 {
                 creep.memory().set("harvesting", false);
             }
         } else {
-            if creep.carry_total() == 0 {
+            if creep.store_used_capacity(None) == 0 {
                 creep.memory().set("harvesting", true);
             }
         }
