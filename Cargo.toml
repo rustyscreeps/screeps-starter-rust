@@ -7,8 +7,8 @@ edition = "2018"
 [dependencies]
 stdweb = "0.4"
 log = "0.4"
-fern = "0.5"
-screeps-game-api = "0.7"
+fern = "0.6"
+screeps-game-api = "0.8"
 
 [profile.release]
 panic = "abort"

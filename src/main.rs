@@ -79,7 +79,10 @@ fn game_loop() {
         }
 
         if creep.memory().bool("harvesting") {
-            let source = &creep.room().find(find::SOURCES)[0];
+            let source = &creep
+                .room()
+                .expect("room is not visible to you")
+                .find(find::SOURCES)[0];
             if creep.pos().is_near_to(source) {
                 let r = creep.harvest(source);
                 if r != ReturnCode::Ok {
@@ -89,7 +92,11 @@ fn game_loop() {
                 creep.move_to(source);
             }
         } else {
-            if let Some(c) = creep.room().controller() {
+            if let Some(c) = creep
+                .room()
+                .expect("room is not visible to you")
+                .controller()
+            {
                 let r = creep.upgrade_controller(&c);
                 if r == ReturnCode::NotInRange {
                     creep.move_to(&c);
