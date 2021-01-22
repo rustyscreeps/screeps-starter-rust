@@ -90,11 +90,11 @@ pub fn game_loop() {
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
-    let name = String::from(creep.name());
-    debug!("running creep {}", name);
     if creep.spawning() {
         return;
     }
+    let name = String::from(creep.name());
+    debug!("running creep {}", name);
 
     let target = creep_targets.remove(&name);
     match target {
