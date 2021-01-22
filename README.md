@@ -15,29 +15,27 @@ apis are broken).
 Quickstart:
 
 ```sh
-# clone:
-
-git clone https://github.com/rustyscreeps/screeps-starter-rust.git
-cd screeps-starter-rust
-# TEMPORARY
-git checkout bindgen
-
 # cli dependencies:
 # TEMPORARY - get the bindgen/wasm-pack branch of the cargo-screeps tool, which is not compatible with stdweb
 git clone https://github.com/rustyscreeps/cargo-screeps.git
 git checkout bindgen
 cd cargo-screeps
 cargo install --path .
+cd ..
 # TEMPORARY once bindgen is merged, go back to simply:
 cargo install cargo-screeps
 
-# configure for uploading:
+# clone:
+git clone https://github.com/rustyscreeps/screeps-starter-rust.git
+cd screeps-starter-rust
+# TEMPORARY
+git checkout bindgen
 
+# configure for uploading:
 cp example-screeps.toml screeps.toml
 nano screeps.toml
 
 # build tool:
-
 cargo screeps --help
 ```
 
