@@ -34,6 +34,16 @@ enum CreepTarget {
 #[wasm_bindgen(js_name = loop)]
 pub fn game_loop() {
     debug!("loop starting! CPU: {}", Game::cpu().get_used());
+    // mutably borrow the creep_targets refcell, which is holding our creep target locks
+    // in the wasm heap
+    CREEP_TARGETS.with(|creep_targets_refcell| {
+        let mut creep_targets = creep_targets_refcell.borrow_mut();
+        debug!("running creeps");
+        // same type conversion (and type assumption) as the spawn loop
+        for creep in Object::values(&Game::creeps()).iter().map(Creep::from) {
+            run_creep(&creep, &mut creep_targets);
+        }
+    });
 
     debug!("running spawns");
     // Game::spawns returns a `js_sys::Object`, which is a light reference to an
@@ -74,17 +84,6 @@ pub fn game_loop() {
             }
         }
     }
-
-    // mutably borrow the creep_targets refcell, which is holding our creep target locks
-    // in the wasm heap
-    CREEP_TARGETS.with(|creep_targets_refcell| {
-        let mut creep_targets = creep_targets_refcell.borrow_mut();
-        debug!("running creeps");
-        // same type conversion (and type assumption) as the spawn loop
-        for creep in Object::values(&Game::creeps()).iter().map(Creep::from) {
-            run_creep(&creep, &mut creep_targets);
-        }
-    });
 
     info!("done! cpu: {}", Game::cpu().get_used())
 }
