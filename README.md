@@ -37,6 +37,10 @@ nano screeps.toml
 
 # build tool:
 cargo screeps --help
+# compile the module
+cargo screeps build
+# compile plus deploy to the configured 'upload' mode
+cargo screeps upload
 ```
 
 [screeps]: https://screeps.com/
