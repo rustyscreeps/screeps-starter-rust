@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use js_sys::{Array, JsString, Object};
 use log::*;
 use screeps::{
-    prelude::*, Creep, Find, Game, JsObjectId, Part, ResourceType, RoomObjectProperties, Source,
-    Structure, StructureController, StructureSpawn, StructureType,
+    prelude::*, Creep, Find, Game, JsObjectId, Part, ResourceType, ReturnCode,
+    RoomObjectProperties, Source, Structure, StructureController, StructureSpawn, StructureType,
 };
 use wasm_bindgen::prelude::*;
 
@@ -77,7 +77,7 @@ pub fn game_loop() {
             let res = spawn.spawn_creep(&body_array, &name, None);
 
             // todo once fixed in branch this should be ReturnCode::Ok instead of this i8 grumble grumble
-            if res != 0 {
+            if res != ReturnCode::Ok {
                 warn!("couldn't spawn: {:?}", res);
             } else {
                 additional += 1;
@@ -104,12 +104,10 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                         match controller_id.resolve() {
                             Some(controller) => {
                                 let r = creep.upgrade_controller(&controller);
-                                //if r == ReturnCode::NotInRange {
-                                if r == -9 {
+                                if r == ReturnCode::NotInRange {
                                     creep.move_to(&controller, None);
                                     true
-                                //} else if r != ReturnCode::Ok {
-                                } else if r != 0 {
+                                } else if r != ReturnCode::Ok {
                                     warn!("couldn't upgrade: {:?}", r);
                                     false
                                 } else {
@@ -128,8 +126,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                             Some(source) => {
                                 if creep.pos().unwrap().is_near_to(&source.pos().unwrap()) {
                                     let r = creep.harvest(&source);
-                                    //if r != ReturnCode::Ok {
-                                    if r != 0 {
+                                    if r != ReturnCode::Ok {
                                         warn!("couldn't harvest: {:?}", r);
                                         false
                                     } else {
