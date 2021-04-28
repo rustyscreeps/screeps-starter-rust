@@ -4,8 +4,9 @@ use std::collections::HashMap;
 use js_sys::{Array, JsString, Object};
 use log::*;
 use screeps::{
-    prelude::*, Creep, Find, Game, JsObjectId, Part, ResourceType, ReturnCode,
-    RoomObjectProperties, Source, Structure, StructureController, StructureSpawn, StructureType,
+    find, prelude::*, CircleStyle, Creep, Game, JsObjectId, Part, Position, ResourceType,
+    ReturnCode, RoomObjectProperties, RoomVisual, Source, StructureController, StructureObject,
+    StructureSpawn,
 };
 use wasm_bindgen::prelude::*;
 
@@ -40,7 +41,7 @@ pub fn game_loop() {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
         debug!("running creeps");
         // same type conversion (and type assumption) as the spawn loop
-        for creep in Object::values(&Game::creeps()).iter().map(Creep::from) {
+        for creep in Game::creeps().values() {
             run_creep(&creep, &mut creep_targets);
         }
     });
@@ -105,7 +106,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                             Some(controller) => {
                                 let r = creep.upgrade_controller(&controller);
                                 if r == ReturnCode::NotInRange {
-                                    creep.move_to(&controller, None);
+                                    creep.move_to(&controller);
                                     true
                                 } else if r != ReturnCode::Ok {
                                     warn!("couldn't upgrade: {:?}", r);
@@ -124,7 +125,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                     if creep.store().get_free_capacity(Some(ResourceType::Energy)) > 0 {
                         match source_id.resolve() {
                             Some(source) => {
-                                if creep.pos().unwrap().is_near_to(&source.pos().unwrap()) {
+                                if creep.pos().is_near_to(source.pos()) {
                                     let r = creep.harvest(&source);
                                     if r != ReturnCode::Ok {
                                         warn!("couldn't harvest: {:?}", r);
@@ -133,7 +134,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                                         true
                                     }
                                 } else {
-                                    creep.move_to(&source, None);
+                                    creep.move_to(&source);
                                     true
                                 }
                             }
@@ -153,15 +154,11 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
             // no target, let's find one depending on if we have energy
             let room = creep.room().expect("couldn't resolve creep room");
             if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
-                for structure in room
-                    .find(Find::Structures, None)
-                    .iter()
-                    .map(Structure::from)
-                {
-                    match structure.structure_type() {
-                        StructureType::Controller => {
+                for structure in room.find(find::STRUCTURES).iter() {
+                    match structure {
+                        StructureObject::StructureController(controller) => {
                             let typed_id: JsObjectId<StructureController> =
-                                JsObjectId::from(structure.id());
+                                JsObjectId::from(screeps::HasId::id(&controller));
                             creep_targets.insert(name, CreepTarget::Upgrade(typed_id));
                             break;
                         }
@@ -170,11 +167,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                     }
                 }
             } else {
-                for source in room
-                    .find(Find::SourcesActive, None)
-                    .iter()
-                    .map(Source::from)
-                {
+                for source in room.find(find::SOURCES_ACTIVE).iter() {
                     let typed_id: JsObjectId<Source> = JsObjectId::from(source.id());
                     creep_targets.insert(name, CreepTarget::Harvest(typed_id));
                     break;

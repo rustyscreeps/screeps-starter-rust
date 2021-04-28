@@ -14,7 +14,7 @@ fern = "0.6"
 # bindgen compatibility still in branch! TODO remove before merge
 #screeps-game-api = { path = "../screeps-game-api" }
 screeps-game-api = { git = "https://github.com/rustyscreeps/screeps-game-api.git", branch = "bindgen" }
-#screeps-game-api = "0.9"
+#screeps-game-api = "0.10"
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"] }
 
@@ -29,8 +29,11 @@ wasm-bindgen-test = "0.3"
 
 [profile.release]
 panic = "abort"
-opt-level = "s"
+opt-level = 3
 lto = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O4"]
 
 [features]
 default = ["console_error_panic_hook"]
