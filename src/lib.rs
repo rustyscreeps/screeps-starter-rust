@@ -1,12 +1,10 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use js_sys::{Array, JsString, Object};
 use log::*;
 use screeps::{
-    find, prelude::*, CircleStyle, Creep, Game, JsObjectId, Part, Position, ResourceType,
-    ReturnCode, RoomObjectProperties, RoomVisual, Source, StructureController, StructureObject,
-    StructureSpawn,
+    find, game, prelude::*, Creep, ObjectId, Part, ResourceType, ReturnCode, RoomObjectProperties,
+    Source, StructureController, StructureObject,
 };
 use wasm_bindgen::prelude::*;
 
@@ -27,21 +25,21 @@ thread_local! {
 // this enum will represent a creep's lock on a specific target object, storing a js reference to the object id so that we can grab a fresh reference to the object each successive tick, since screeps game objects become 'stale' and shouldn't be used beyond the tick they were fetched
 #[derive(Clone)]
 enum CreepTarget {
-    Upgrade(JsObjectId<StructureController>),
-    Harvest(JsObjectId<Source>),
+    Upgrade(ObjectId<StructureController>),
+    Harvest(ObjectId<Source>),
 }
 
 // to use a reserved name as a function name, use `js_name`:
 #[wasm_bindgen(js_name = loop)]
 pub fn game_loop() {
-    debug!("loop starting! CPU: {}", Game::cpu().get_used());
+    debug!("loop starting! CPU: {}", game::cpu::get_used());
     // mutably borrow the creep_targets refcell, which is holding our creep target locks
     // in the wasm heap
     CREEP_TARGETS.with(|creep_targets_refcell| {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
         debug!("running creeps");
         // same type conversion (and type assumption) as the spawn loop
-        for creep in Game::creeps().values() {
+        for creep in game::creeps().values() {
             run_creep(&creep, &mut creep_targets);
         }
     });
@@ -56,26 +54,18 @@ pub fn game_loop() {
     // They are returned as wasm_bindgen::JsValue references, which we can safely
     // assume are StructureSpawn objects as returned from js without checking first
     let mut additional = 0;
-    for spawn in Object::values(&Game::spawns())
-        .iter()
-        .map(StructureSpawn::from)
-    {
+    for spawn in game::spawns().values() {
         debug!("running spawn {}", String::from(spawn.name()));
-        let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
 
+        let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
         if spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum() {
-            // generate the body part array on the js side which will be used
-            let body_array = Array::new();
-            for part in body.iter() {
-                body_array.push(&JsValue::from(part.clone()));
-            }
             // create a unique name, spawn.
-            let name_base = Game::time();
-            let name = JsString::from(format!("{}-{}", name_base, additional));
+            let name_base = game::time();
+            let name = format!("{}-{}", name_base, additional);
             // note that this bot has a fatal flaw; spawning a creep
             // creates Memory.creeps[creep_name] which will build up forever;
             // these memory entries should be prevented (todo doc link on how) or cleaned up
-            let res = spawn.spawn_creep(&body_array, &name, None);
+            let res = spawn.spawn_creep(&body, &name);
 
             // todo once fixed in branch this should be ReturnCode::Ok instead of this i8 grumble grumble
             if res != ReturnCode::Ok {
@@ -86,7 +76,7 @@ pub fn game_loop() {
         }
     }
 
-    info!("done! cpu: {}", Game::cpu().get_used())
+    info!("done! cpu: {}", game::cpu::get_used())
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
@@ -157,9 +147,8 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                 for structure in room.find(find::STRUCTURES).iter() {
                     match structure {
                         StructureObject::StructureController(controller) => {
-                            let typed_id: JsObjectId<StructureController> =
-                                JsObjectId::from(screeps::HasId::id(&controller));
-                            creep_targets.insert(name, CreepTarget::Upgrade(typed_id));
+                            let id = controller.id();
+                            creep_targets.insert(name, CreepTarget::Upgrade(id));
                             break;
                         }
                         // other structures, skip
@@ -168,8 +157,8 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                 }
             } else {
                 for source in room.find(find::SOURCES_ACTIVE).iter() {
-                    let typed_id: JsObjectId<Source> = JsObjectId::from(source.id());
-                    creep_targets.insert(name, CreepTarget::Harvest(typed_id));
+                    let id = source.id();
+                    creep_targets.insert(name, CreepTarget::Harvest(id));
                     break;
                 }
             }
