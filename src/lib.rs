@@ -83,7 +83,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
     if creep.spawning() {
         return;
     }
-    let name = String::from(creep.name());
+    let name = creep.name();
     debug!("running creep {}", name);
 
     let target = creep_targets.remove(&name);
@@ -145,22 +145,13 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
             let room = creep.room().expect("couldn't resolve creep room");
             if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
                 for structure in room.find(find::STRUCTURES).iter() {
-                    match structure {
-                        StructureObject::StructureController(controller) => {
-                            let id = controller.id();
-                            creep_targets.insert(name, CreepTarget::Upgrade(id));
-                            break;
-                        }
-                        // other structures, skip
-                        _ => {}
+                    if let StructureObject::StructureController(controller) = structure {
+                        creep_targets.insert(name, CreepTarget::Upgrade(controller.id()));
+                        break;
                     }
                 }
-            } else {
-                for source in room.find(find::SOURCES_ACTIVE).iter() {
-                    let id = source.id();
-                    creep_targets.insert(name, CreepTarget::Harvest(id));
-                    break;
-                }
+            } else if let Some(source) = room.find(find::SOURCES_ACTIVE).get(0) {
+                creep_targets.insert(name, CreepTarget::Harvest(source.id()));
             }
         }
     }
