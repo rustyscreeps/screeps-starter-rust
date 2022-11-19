@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, hash_map::Entry};
 
 use log::*;
 use screeps::{
@@ -86,72 +86,54 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
     let name = creep.name();
     debug!("running creep {}", name);
 
-    let target = creep_targets.remove(&name);
+    let target = creep_targets.entry(name);
     match target {
-        Some(creep_target) => {
-            let keep_target = match &creep_target {
-                CreepTarget::Upgrade(controller_id) => {
-                    if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
-                        match controller_id.resolve() {
-                            Some(controller) => {
-                                let r = creep.upgrade_controller(&controller);
-                                if r == ReturnCode::NotInRange {
-                                    creep.move_to(&controller);
-                                    true
-                                } else if r != ReturnCode::Ok {
-                                    warn!("couldn't upgrade: {:?}", r);
-                                    false
-                                } else {
-                                    true
-                                }
-                            }
-                            None => false,
+         Entry::Occupied(entry) => {
+            let creep_target = entry.get();
+            match creep_target {
+                CreepTarget::Upgrade(controller_id) if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 => {
+                    if let Some(controller) = controller_id.resolve() {
+                        let r = creep.upgrade_controller(&controller);
+                        if r == ReturnCode::NotInRange {
+                            creep.move_to(&controller);
+                        } else if r != ReturnCode::Ok {
+                            warn!("couldn't upgrade: {:?}", r);
+                            entry.remove();
                         }
                     } else {
-                        false
+                        entry.remove();
                     }
                 }
-                CreepTarget::Harvest(source_id) => {
-                    if creep.store().get_free_capacity(Some(ResourceType::Energy)) > 0 {
-                        match source_id.resolve() {
-                            Some(source) => {
-                                if creep.pos().is_near_to(source.pos()) {
-                                    let r = creep.harvest(&source);
-                                    if r != ReturnCode::Ok {
-                                        warn!("couldn't harvest: {:?}", r);
-                                        false
-                                    } else {
-                                        true
-                                    }
-                                } else {
-                                    creep.move_to(&source);
-                                    true
-                                }
+                CreepTarget::Harvest(source_id) if creep.store().get_free_capacity(Some(ResourceType::Energy)) > 0 => {
+                    if let Some(source) = source_id.resolve() {
+                        if creep.pos().is_near_to(source.pos()) {
+                            let r = creep.harvest(&source);
+                            if r != ReturnCode::Ok {
+                                warn!("couldn't harvest: {:?}", r);
+                                entry.remove();
                             }
-                            None => false,
+                        } else {
+                            creep.move_to(&source);
                         }
                     } else {
-                        false
+                        entry.remove();
                     }
-                }
+                },
+                _ => { entry.remove(); }
             };
-
-            if keep_target {
-                creep_targets.insert(name, creep_target);
-            }
         }
-        None => {
+        Entry::Vacant(entry) => {
             // no target, let's find one depending on if we have energy
             let room = creep.room().expect("couldn't resolve creep room");
             if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
                 for structure in room.find(find::STRUCTURES).iter() {
                     if let StructureObject::StructureController(controller) = structure {
-                        creep_targets.insert(name, CreepTarget::Upgrade(controller.id()));
+                        entry.insert(CreepTarget::Upgrade(controller.id()));
                         break;
                     }
                 }
             } else if let Some(source) = room.find(find::SOURCES_ACTIVE).get(0) {
-                creep_targets.insert(name, CreepTarget::Harvest(source.id()));
+                entry.insert(CreepTarget::Harvest(source.id()));
             }
         }
     }
