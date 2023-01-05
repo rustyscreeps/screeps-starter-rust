@@ -126,13 +126,13 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
             // no target, let's find one depending on if we have energy
             let room = creep.room().expect("couldn't resolve creep room");
             if creep.store().get_used_capacity(Some(ResourceType::Energy)) > 0 {
-                for structure in room.find(find::STRUCTURES).iter() {
+                for structure in room.find(find::STRUCTURES, None).iter() {
                     if let StructureObject::StructureController(controller) = structure {
                         entry.insert(CreepTarget::Upgrade(controller.id()));
                         break;
                     }
                 }
-            } else if let Some(source) = room.find(find::SOURCES_ACTIVE).get(0) {
+            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).get(0) {
                 entry.insert(CreepTarget::Harvest(source.id()));
             }
         }
