@@ -33,7 +33,10 @@ opt-level = 3
 lto = true
 
 [package.metadata.wasm-pack.profile.release]
-# Replace the following with `wasm-opt = ["-O4"]` if improved performance is required. Will require additional dependencies
+# Replace the following with `wasm-opt = ["-O4", "-g"]` if improved performance is required. 
+# Removing the `"-g"` will further decrease the size of the wasm at the cost of renaming functions making debugging harder
+# Will require additional dependencies
+
 wasm-opt = false
 
 [features]
