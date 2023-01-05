@@ -33,7 +33,8 @@ opt-level = 3
 lto = true
 
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = ["-O4"]
+# Replace the following with `wasm-opt = ["-O4"]` if improved performance is required. Will require additional dependencies
+wasm-opt = false
 
 [features]
 default = ["console_error_panic_hook"]
