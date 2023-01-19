@@ -18,8 +18,8 @@ Quickstart:
 # cli dependencies:
 # TEMPORARY - get the bindgen/wasm-pack branch of the cargo-screeps tool, which is not compatible with stdweb
 git clone https://github.com/rustyscreeps/cargo-screeps.git
-git checkout bindgen
 cd cargo-screeps
+git checkout bindgen
 cargo install --path .
 cd ..
 # TEMPORARY once bindgen is merged, go back to simply:
