@@ -11,18 +11,9 @@ crate-type = ["cdylib", "rlib"]
 js-sys = "0.3"
 log = "0.4"
 fern = "0.6"
-# bindgen compatibility still in branch! TODO remove before merge
-#screeps-game-api = { path = "../screeps-game-api" }
-screeps-game-api = { git = "https://github.com/rustyscreeps/screeps-game-api.git", branch = "bindgen" }
-#screeps-game-api = "0.10"
+screeps-game-api = "0.10"
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"] }
-
-# The `console_error_panic_hook` crate provides better debugging of panics by
-# logging them with `console.error`. This is great for development, but requires
-# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
-# code size when deploying.
-console_error_panic_hook = { version = "0.1.6", optional = true }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
@@ -33,10 +24,12 @@ opt-level = 3
 lto = true
 
 [package.metadata.wasm-pack.profile.release]
-# Replace the following with `wasm-opt = ["-O4", "-g"]` if improved performance is required. 
-# Removing the `"-g"` will further decrease the size of the wasm at the cost of renaming functions making debugging harder
-# Will require additional dependencies
+# Replace the following with `wasm-opt = ["-O4", "-g"]` (or with whatever flag
+# combo you'd like) to enable wasm-opt optimization, which wasm-pack will try to install
+# automatically, but must be installed separately on some operating systems
+# Removing the `"-g"` will further decrease the size of the binary at but removes function names,
+# making stack traces upon panic less useful
 wasm-opt = false
 
 [features]
-default = ["console_error_panic_hook"]
+default = []
