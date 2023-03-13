@@ -1,18 +1,20 @@
 default_deploy_mode = "upload"
 
 [upload]
-username = "your username or email"
-password = "your password"
-branch = "default"
-# ptr = false
+auth_token = "your screeps.com auth token"
 
-# hostname = "screeps.com"
-# ssl = true
-# port = 443
+[ptr]
+auth_token = "your screeps.com auth token"
+prefix = "ptr"
 
-# hostname = "localhost"
-# ssl = false
-# port = 21025
+[copy]
+destination = "path to your local code directory from your game client, without branch directory"
 
-# for full syntax, see
-# https://github.com/daboross/screeps-in-rust-via-wasm/blob/master/screeps-defaults.toml
+[season]
+auth_token = "your screeps.com auth token"
+prefix = "season"
+  [season.build]
+  extra_options = ["--features=my-crate-season-1-feature"]
+
+# for full syntax and available options, see
+# https://github.com/rustyscreeps/screeps-game-api/blob/master/screeps-defaults.toml

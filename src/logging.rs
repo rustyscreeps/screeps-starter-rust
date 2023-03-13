@@ -1,4 +1,6 @@
-use stdweb::js;
+use js_sys::JsString;
+use screeps::game;
+use web_sys::console;
 
 pub use log::LevelFilter::*;
 
@@ -10,10 +12,7 @@ impl log::Log for JsLog {
         true
     }
     fn log(&self, record: &log::Record<'_>) {
-        let message = format!("{}", record.args());
-        js! {
-            console.log(@{message});
-        }
+        console::log_1(&JsString::from(format!("{}", record.args())));
     }
     fn flush(&self) {}
 }
@@ -22,10 +21,7 @@ impl log::Log for JsNotify {
         true
     }
     fn log(&self, record: &log::Record<'_>) {
-        let message = format!("{}", record.args());
-        js! {
-            Game.notify(@{message});
-        }
+        game::notify(&format!("{}", record.args()), None);
     }
     fn flush(&self) {}
 }
@@ -46,7 +42,7 @@ pub fn setup_logging(verbosity: log::LevelFilter) {
             fern::Dispatch::new()
                 .level(log::LevelFilter::Warn)
                 .format(|out, message, _record| {
-                    let time = screeps::game::time();
+                    let time = game::time();
                     out.finish(format_args!("[{}] {}", time, message))
                 })
                 .chain(Box::new(JsNotify) as Box<dyn log::Log>),
