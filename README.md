@@ -28,7 +28,7 @@ cd screeps-starter-rust
 cp example-screeps.toml screeps.toml
 nano screeps.toml
 # configure credentials (API key) if you'd like to upload directly,
-# or a directory to copy to if you'd prepfer to use the game client to deploy
+# or a directory to copy to if you'd prefer to use the game client to deploy
 
 # build tool:
 cargo screeps --help
