@@ -8,9 +8,11 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+fern = "0.6"
+getrandom = { version = "0.2", features = ["custom"] }
 js-sys = "0.3"
 log = "0.4"
-fern = "0.6"
+rand = "0.8"
 screeps-game-api = "0.10"
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"] }
