@@ -11,7 +11,7 @@ crate-type = ["cdylib", "rlib"]
 js-sys = "0.3"
 log = "0.4"
 fern = "0.6"
-screeps-game-api = "0.12"
+screeps-game-api = "0.13"
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"] }
 
@@ -24,14 +24,17 @@ opt-level = 3
 lto = true
 
 [package.metadata.wasm-pack.profile.release]
-# Replace the following with `wasm-opt = ["-O4", "-g"]` (or with whatever flag
-# combo you'd like) to enable wasm-opt optimization, which wasm-pack will try to install
-# automatically, but must be installed separately on some operating systems
-# With newer rust versions, you might need to also add "--disable-sign-ext" in order to avoid the
-# usage of new opcodes which the screeps servers don't understand
-# Removing the `"-g"` will further decrease the size of the binary at but removes function names,
-# making stack traces upon panic less useful
+# Replace the following to enable wasm-opt optimization
+# wasm-pack will try to install wasm-opt automatically, but it must be installed by hand on some
+# operating systems.
 wasm-opt = false
+# See wasm-opt for full available options; handy examples:
+# -O4 - optimize aggressively for performance
+# -Oz - optimize aggressively for code size
+# -g - leave debug info in place, allowing for more descriptive stack traces on panic
+# --disable-sign-ext - prevents opcodes that the screeps servers can't load (see 
+# https://github.com/rustyscreeps/screeps-game-api/issues/391)
+#wasm-opt = ["-O4", "--disable-sign-ext"]
 
 [features]
 default = []
