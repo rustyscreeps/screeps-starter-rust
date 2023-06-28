@@ -27,6 +27,8 @@ lto = true
 # Replace the following with `wasm-opt = ["-O4", "-g"]` (or with whatever flag
 # combo you'd like) to enable wasm-opt optimization, which wasm-pack will try to install
 # automatically, but must be installed separately on some operating systems
+# With newer rust versions, you might need to also add "--disable-sign-ext" in order to avoid the
+# usage of new opcodes which the screeps servers don't understand
 # Removing the `"-g"` will further decrease the size of the binary at but removes function names,
 # making stack traces upon panic less useful
 wasm-opt = false
