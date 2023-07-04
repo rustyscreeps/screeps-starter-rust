@@ -15,6 +15,9 @@ prefix = "ptr"
 
 [copy]
 destination = "path to your local code directory from your game client, without branch directory"
+[copy.build]
+  # set the sim feature to allow for use with the coordinates in the simulation room
+  extra_options = ["--features=sim", "--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort", "-Z", "build-std-features=panic_immediate_abort"]
 
 [season]
 auth_token = "your screeps.com auth token"
