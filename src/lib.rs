@@ -1,7 +1,8 @@
 use std::cell::RefCell;
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::{hash_map::Entry, HashMap, HashSet};
 
 use log::*;
+use js_sys::{Reflect, JsString, Object};
 use screeps::{
     constants::{ErrorCode, Part, ResourceType},
     enums::StructureObject,
@@ -10,7 +11,7 @@ use screeps::{
     objects::{Creep, Source, StructureController},
     prelude::*,
 };
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 mod logging;
 
@@ -65,6 +66,32 @@ pub fn game_loop() {
             match spawn.spawn_creep(&body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
+            }
+        }
+    }
+
+    if game::time() % 10 == 0 {
+        info!("running memory cleanup");
+        let mut alive_creeps = HashSet::new();
+        // add all living creep names to a hashset
+        for creep_name in game::creeps().keys() {
+            alive_creeps.insert(creep_name);
+        }
+
+        // grab `Memory.creeps` (if it exists)
+        if let Ok(memory_creeps) = Reflect::get(&screeps::memory::ROOT, &JsString::from("creeps")) {
+            // convert from JsValue to Object
+            let memory_creeps: Object = memory_creeps.unchecked_into();
+            // iterate memory creeps
+            for creep_name_js in Object::keys(&memory_creeps).iter() {
+                // convert to String (after converting to JsString)
+                let creep_name = String::from(creep_name_js.dyn_ref::<JsString>().unwrap());
+
+                // check the HashSet for the creep name, deleting if not alive
+                if !alive_creeps.contains(&creep_name) {
+                    info!("deleting memory for dead creep {}", creep_name);
+                    Reflect::delete_property(&memory_creeps, &creep_name_js);
+                }
             }
         }
     }
