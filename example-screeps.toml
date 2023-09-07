@@ -4,7 +4,7 @@ default_deploy_mode = "upload"
 # options to allow building code against rust versions >=1.70 without opcodes
 # incompatible with screeps server environments; requires nightly rust. See 
 # https://github.com/rustyscreeps/screeps-game-api/issues/391
-extra_options = ["--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort", "-Z", "build-std-features=panic_immediate_abort"]
+extra_options = ["--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort"]
 
 [upload]
 auth_token = "your screeps.com auth token"
@@ -17,13 +17,13 @@ prefix = "ptr"
 destination = "path to your local code directory from your game client, without branch directory"
 [copy.build]
   # set the sim feature to allow for use with the coordinates in the simulation room
-  extra_options = ["--features=sim", "--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort", "-Z", "build-std-features=panic_immediate_abort"]
+  extra_options = ["--features=sim", "--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort"]
 
 [season]
 auth_token = "your screeps.com auth token"
 prefix = "season"
   [season.build]
-  extra_options = ["--features=my-crate-season-1-feature", "--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort", "-Z", "build-std-features=panic_immediate_abort"]
+  extra_options = ["--features=my-crate-season-1-feature", "--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort"]
 
 # for full syntax and available options, see
 # https://github.com/rustyscreeps/screeps-game-api/blob/master/screeps-defaults.toml
