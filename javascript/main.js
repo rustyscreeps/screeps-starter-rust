@@ -20,7 +20,7 @@ module.exports.loop = function () {
                 return;
             }
 
-            // delect the module from the cache, so we can reload it
+            // delete the module from the cache, so we can reload it
             if (MODULE_NAME in require.cache) {
                 delete require.cache[MODULE_NAME];
             }
@@ -35,9 +35,12 @@ module.exports.loop = function () {
         }
     } catch (error) {
         console_error("caught exception:", error);
-        if (error.stack) {
-            console_error("stack trace:", error.stack);
-        }
+        // we've already logged the more-descriptive stack trace from rust's panic_hook
+        // if for some reason (like wasm init problems) you're not getting output from that
+        // and need more information, uncomment the following:
+        // if (error.stack) {
+        //     console_error("stack trace:", error.stack);
+        // }
         console_error("resetting VM next tick.");
         wasm_module = null;
     }
