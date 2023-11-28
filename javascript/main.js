@@ -60,6 +60,9 @@ module.exports.loop = function () {
             //     console.error("stack trace:", error.stack);
             // }
             console.error("resetting VM next tick.");
+            // if we call `Game.cpu.halt();` this tick, console output from the tick (including the
+            // stack trace) is not shown due to those contents being copied post-tick (and the halt
+            // function destroying the environment immediately). This delays the halt() until next tick.
             halt_next_tick = true;
         }
     }
