@@ -10,7 +10,7 @@ const MODULE_NAME = "screeps-starter-rust";
 // information that wasm_bindgen only passes here.
 //
 // There is nothing special about this function and it may also be used by any JS/Rust code as a convenience.
-const console_error = function () {
+function console_error() {
     const processedArgs = _.map(arguments, (arg) => {
         if (arg instanceof Error) {
             // On this version of Node, the `stack` property of errors contains
