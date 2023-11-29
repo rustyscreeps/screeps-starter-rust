@@ -10,7 +10,7 @@ const MODULE_NAME = "screeps-starter-rust";
 // information that wasm_bindgen only passes here.
 //
 // There is nothing special about this function and it may also be used by any JS/Rust code as a convenience.
-const console_error = function () {
+console.error = function () {
     const processedArgs = _.map(arguments, (arg) => {
         if (arg instanceof Error) {
             // On this version of Node, the `stack` property of errors contains
@@ -27,8 +27,7 @@ const console_error = function () {
 let halt_next_tick = false;
 
 module.exports.loop = function () {
-    // need to freshly override the fake console object each tick
-    console.error = console_error;
+    console.error("testing? " + Game.time)
     if (halt_next_tick === true) {
         // we've had an error on the last tick (see error catch); skip execution during the current
         // tick, asking to have our IVM immediately destroyed so we get a fresh environment next tick
