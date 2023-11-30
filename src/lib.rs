@@ -1,5 +1,7 @@
-use std::cell::RefCell;
-use std::collections::{hash_map::Entry, HashMap, HashSet};
+use std::{
+    cell::RefCell,
+    collections::{hash_map::Entry, HashMap, HashSet},
+};
 
 use js_sys::{JsString, Object, Reflect};
 use log::*;
