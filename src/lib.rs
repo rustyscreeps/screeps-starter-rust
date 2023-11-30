@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 use std::collections::{hash_map::Entry, HashMap, HashSet};
 
+use js_sys::{JsString, Object, Reflect};
 use log::*;
-use js_sys::{Reflect, JsString, Object};
 use screeps::{
     constants::{ErrorCode, Part, ResourceType},
     enums::StructureObject,
@@ -14,7 +14,6 @@ use screeps::{
 use wasm_bindgen::{prelude::*, JsCast};
 
 mod logging;
-
 
 #[wasm_bindgen]
 pub fn setup() {
@@ -69,9 +68,6 @@ pub fn game_loop() {
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
-            // note that this bot has a fatal flaw; spawning a creep
-            // creates Memory.creeps[creep_name] which will build up forever;
-            // these memory entries should be prevented (todo doc link on how) or cleaned up
             match spawn.spawn_creep(&body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
@@ -79,7 +75,9 @@ pub fn game_loop() {
         }
     }
 
-    if game::time() % 10 == 0 {
+    // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
+    // is used; this should be removed if you're using RawMemory/serde for persistence
+    if game::time() % 1000 == 0 {
         info!("running memory cleanup");
         let mut alive_creeps = HashSet::new();
         // add all living creep names to a hashset
@@ -99,7 +97,7 @@ pub fn game_loop() {
                 // check the HashSet for the creep name, deleting if not alive
                 if !alive_creeps.contains(&creep_name) {
                     info!("deleting memory for dead creep {}", creep_name);
-                    Reflect::delete_property(&memory_creeps, &creep_name_js);
+                    let _ = Reflect::delete_property(&memory_creeps, &creep_name_js);
                 }
             }
         }
@@ -170,7 +168,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                         break;
                     }
                 }
-            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).get(0) {
+            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).first() {
                 entry.insert(CreepTarget::Harvest(source.id()));
             }
         }
