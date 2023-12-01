@@ -17,11 +17,6 @@ use wasm_bindgen::{prelude::*, JsCast};
 
 mod logging;
 
-#[wasm_bindgen]
-pub fn setup() {
-    logging::setup_logging(logging::Info);
-}
-
 // this is one way to persist data between ticks within Rust's memory, as opposed to
 // keeping state in memory on game objects - but will be lost on global resets!
 thread_local! {
