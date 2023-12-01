@@ -1,6 +1,9 @@
-use std::cell::RefCell;
-use std::collections::{hash_map::Entry, HashMap};
+use std::{
+    cell::RefCell,
+    collections::{hash_map::Entry, HashMap, HashSet},
+};
 
+use js_sys::{JsString, Object, Reflect};
 use log::*;
 use screeps::{
     constants::{ErrorCode, Part, ResourceType},
@@ -10,15 +13,9 @@ use screeps::{
     objects::{Creep, Source, StructureController},
     prelude::*,
 };
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 mod logging;
-
-
-#[wasm_bindgen]
-pub fn setup() {
-    logging::setup_logging(logging::Info);
-}
 
 // this is one way to persist data between ticks within Rust's memory, as opposed to
 // keeping state in memory on game objects - but will be lost on global resets!
@@ -68,12 +65,37 @@ pub fn game_loop() {
             // create a unique name, spawn.
             let name_base = game::time();
             let name = format!("{}-{}", name_base, additional);
-            // note that this bot has a fatal flaw; spawning a creep
-            // creates Memory.creeps[creep_name] which will build up forever;
-            // these memory entries should be prevented (todo doc link on how) or cleaned up
             match spawn.spawn_creep(&body, &name) {
                 Ok(()) => additional += 1,
                 Err(e) => warn!("couldn't spawn: {:?}", e),
+            }
+        }
+    }
+
+    // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
+    // is used; this should be removed if you're using RawMemory/serde for persistence
+    if game::time() % 1000 == 0 {
+        info!("running memory cleanup");
+        let mut alive_creeps = HashSet::new();
+        // add all living creep names to a hashset
+        for creep_name in game::creeps().keys() {
+            alive_creeps.insert(creep_name);
+        }
+
+        // grab `Memory.creeps` (if it exists)
+        if let Ok(memory_creeps) = Reflect::get(&screeps::memory::ROOT, &JsString::from("creeps")) {
+            // convert from JsValue to Object
+            let memory_creeps: Object = memory_creeps.unchecked_into();
+            // iterate memory creeps
+            for creep_name_js in Object::keys(&memory_creeps).iter() {
+                // convert to String (after converting to JsString)
+                let creep_name = String::from(creep_name_js.dyn_ref::<JsString>().unwrap());
+
+                // check the HashSet for the creep name, deleting if not alive
+                if !alive_creeps.contains(&creep_name) {
+                    info!("deleting memory for dead creep {}", creep_name);
+                    let _ = Reflect::delete_property(&memory_creeps, &creep_name_js);
+                }
             }
         }
     }
@@ -143,7 +165,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                         break;
                     }
                 }
-            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).get(0) {
+            } else if let Some(source) = room.find(find::SOURCES_ACTIVE, None).first() {
                 entry.insert(CreepTarget::Harvest(source.id()));
             }
         }
