@@ -13,7 +13,7 @@ use screeps::{
     objects::{Creep, Source, StructureController},
     prelude::*,
 };
-use wasm_bindgen::{prelude::*, JsCast};
+use wasm_bindgen::prelude::*;
 
 mod logging;
 

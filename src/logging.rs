@@ -57,23 +57,23 @@ pub fn setup_logging(verbosity: log::LevelFilter) {
     panic::set_hook(Box::new(panic_hook));
 }
 
+#[wasm_bindgen]
+extern "C" {
+    type Error;
+
+    #[wasm_bindgen(constructor)]
+    fn new() -> Error;
+
+    #[wasm_bindgen(structural, method, getter)]
+    fn stack(error: &Error) -> String;
+
+    #[wasm_bindgen(static_method_of = Error, setter, js_name = stackTraceLimit)]
+    fn stack_trace_limit(size: f32);
+}
+
 fn panic_hook(info: &PanicInfo) {
     // import JS Error API to get backtrace info (backtraces don't work in wasm)
     // Node 8 does support this API: https://nodejs.org/docs/latest-v8.x/api/errors.html#errors_error_stack
-
-    #[wasm_bindgen]
-    extern "C" {
-        type Error;
-
-        #[wasm_bindgen(constructor)]
-        fn new() -> Error;
-
-        #[wasm_bindgen(structural, method, getter)]
-        fn stack(error: &Error) -> String;
-
-        #[wasm_bindgen(static_method_of = Error, setter, js_name = stackTraceLimit)]
-        fn stack_trace_limit(size: f32);
-    }
 
     let mut fmt_error = String::new();
     let _ = writeln!(fmt_error, "{}", info);
