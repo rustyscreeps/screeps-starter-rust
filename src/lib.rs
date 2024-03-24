@@ -3,6 +3,7 @@ use std::{
     collections::{hash_map::Entry, HashMap, HashSet},
 };
 
+use crate::types::Creep;
 use js_sys::{JsString, Object, Reflect};
 use log::*;
 use screeps::{
@@ -10,12 +11,13 @@ use screeps::{
     enums::StructureObject,
     find, game,
     local::ObjectId,
-    objects::{Creep, Source, StructureController},
+    objects::{Source, StructureController},
     prelude::*,
 };
 use wasm_bindgen::prelude::*;
 
 mod logging;
+mod types;
 
 // this is one way to persist data between ticks within Rust's memory, as opposed to
 // keeping state in memory on game objects - but will be lost on global resets!
@@ -35,9 +37,12 @@ enum CreepTarget {
 }
 
 // add wasm_bindgen to any function you would like to expose for call from js
-// to use a reserved name as a function name, use `js_name`:
+// to use a reserved name as a function name, use `js_name`.
+// You can pass arguments from JS. For example, here we are passing in the list of creeps
+// as of the start of the tick and since we know we haven't spawned any creeps yet this tick
+// we can use our custom Creep type instead of screeps::Creep.
 #[wasm_bindgen(js_name = loop)]
-pub fn game_loop() {
+pub fn game_loop(creeps: Vec<Creep>) {
     INIT_LOGGING.call_once(|| {
         // show all output of Info level, adjust as needed
         logging::setup_logging(logging::Info);
@@ -50,7 +55,7 @@ pub fn game_loop() {
     CREEP_TARGETS.with(|creep_targets_refcell| {
         let mut creep_targets = creep_targets_refcell.borrow_mut();
         debug!("running creeps");
-        for creep in game::creeps().values() {
+        for creep in creeps {
             run_creep(&creep, &mut creep_targets);
         }
     });
