@@ -1,7 +1,4 @@
-use std::{
-    cell::RefCell,
-    collections::{hash_map::Entry, HashMap, HashSet},
-};
+use std::collections::{hash_map::Entry, HashMap, HashSet};
 
 use js_sys::{JsString, Object, Reflect};
 use log::*;
@@ -17,14 +14,6 @@ use wasm_bindgen::prelude::*;
 
 mod logging;
 
-// this is one way to persist data between ticks within Rust's memory, as opposed to
-// keeping state in memory on game objects - but will be lost on global resets!
-thread_local! {
-    static CREEP_TARGETS: RefCell<HashMap<String, CreepTarget>> = RefCell::new(HashMap::new());
-}
-
-static INIT_LOGGING: std::sync::Once = std::sync::Once::new();
-
 // this enum will represent a creep's lock on a specific target object, storing a js reference
 // to the object id so that we can grab a fresh reference to the object each successive tick,
 // since screeps game objects become 'stale' and shouldn't be used beyond the tick they were fetched
@@ -34,27 +23,49 @@ enum CreepTarget {
     Harvest(ObjectId<Source>),
 }
 
-// add wasm_bindgen to any function you would like to expose for call from js
-// to use a reserved name as a function name, use `js_name`:
-#[wasm_bindgen(js_name = loop)]
-pub fn game_loop() {
-    INIT_LOGGING.call_once(|| {
+// Annotating a struct with `#[wasm_bindgen]` will generate a JS class of the same name with all
+// methods that are also annotated with `#[wasm_bindgen]`. The generated class is a simpler wrapper
+// around an integer representing a pointer to the struct instance in the WASM heap.
+// This is one way to persist data between ticks within Rust's memory, as opposed to
+// keeping state in memory on game objects - but will be lost on global resets!
+#[wasm_bindgen]
+pub struct Bot {
+    creep_targets: HashMap<String, CreepTarget>,
+}
+
+#[wasm_bindgen]
+impl Bot {
+    #[wasm_bindgen(constructor)]
+    pub fn initialize() -> Self {
+        // Put any code that only should happen once at startup here
+
         // show all output of Info level, adjust as needed
         logging::setup_logging(logging::Info);
-    });
 
-    debug!("loop starting! CPU: {}", game::cpu::get_used());
+        Self {
+            creep_targets: HashMap::new(),
+        }
+    }
 
-    // mutably borrow the creep_targets refcell, which is holding our creep target locks
-    // in the wasm heap
-    CREEP_TARGETS.with(|creep_targets_refcell| {
-        let mut creep_targets = creep_targets_refcell.borrow_mut();
+    // add wasm_bindgen to any function you would like to expose for call from js
+    // to use a reserved name as a function name, use `js_name`.
+    #[wasm_bindgen(js_name = loop)]
+    pub fn game_loop(&mut self) {
+        debug!("loop starting! CPU: {}", game::cpu::get_used());
+
         debug!("running creeps");
         for creep in game::creeps().values() {
-            run_creep(&creep, &mut creep_targets);
+            run_creep(&creep, &mut self.creep_targets);
         }
-    });
 
+        run_spawns();
+        cleanup_memory();
+
+        info!("done! cpu: {}", game::cpu::get_used());
+    }
+}
+
+fn run_spawns() {
     debug!("running spawns");
     let mut additional = 0;
     for spawn in game::spawns().values() {
@@ -71,7 +82,9 @@ pub fn game_loop() {
             }
         }
     }
+}
 
+fn cleanup_memory() {
     // memory cleanup; memory gets created for all creeps upon spawning, and any time move_to
     // is used; this should be removed if you're using RawMemory/serde for persistence
     if game::time() % 1000 == 0 {
@@ -99,8 +112,6 @@ pub fn game_loop() {
             }
         }
     }
-
-    info!("done! cpu: {}", game::cpu::get_used())
 }
 
 fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {

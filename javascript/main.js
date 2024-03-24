@@ -1,5 +1,5 @@
 "use strict";
-let wasm_module;
+let bot;
 
 // replace this with the name of your module
 const MODULE_NAME = "screeps-starter-rust";
@@ -36,8 +36,8 @@ module.exports.loop = function () {
         Game.cpu.halt();
     } else {
         try {
-            if (wasm_module) {
-                wasm_module.loop();
+            if (bot) {
+                bot.loop();
             } else {
                 // attempt to load the wasm only if there's enough bucket to do a bunch of work this tick
                 if (Game.cpu.bucket < 750) {
@@ -45,11 +45,13 @@ module.exports.loop = function () {
                     return;
                 }
                 // load the wasm module
-                wasm_module = require(MODULE_NAME);
+                const wasm_module = require(MODULE_NAME);
                 // load the wasm instance!
                 wasm_module.initialize_instance();
+                // Create the instance of our Bot class
+                bot = new wasm_module.Bot();
                 // go ahead and run the loop for its first tick
-                wasm_module.loop();
+                bot.loop();
             }
         } catch (error) {
             console.error("caught exception:", error);
