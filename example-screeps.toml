@@ -8,10 +8,16 @@ extra_options = ["--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "buil
 
 [upload]
 auth_token = "your screeps.com auth token"
+[upload.build]
+  # set the MMO feature to allow for MMO-only API endpoints related to multiple shards and
+  # intershard resources
+  extra_options = ["--features=mmo"]
 
 [ptr]
 auth_token = "your screeps.com auth token"
 prefix = "ptr"
+[ptr.build]
+  extra_options = ["--features=mmo"]
 
 [season]
 auth_token = "your screeps.com auth token"
