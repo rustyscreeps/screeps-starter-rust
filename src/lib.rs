@@ -58,7 +58,7 @@ pub fn game_loop() {
     debug!("running spawns");
     let mut additional = 0;
     for spawn in game::spawns().values() {
-        debug!("running spawn {}", String::from(spawn.name()));
+        debug!("running spawn {}", spawn.name());
 
         let body = [Part::Move, Part::Move, Part::Carry, Part::Work];
         if spawn.room().unwrap().energy_available() >= body.iter().map(|p| p.cost()).sum() {
