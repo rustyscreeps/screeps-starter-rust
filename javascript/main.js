@@ -36,8 +36,10 @@ module.exports.loop = function () {
         Game.cpu.halt();
     } else {
         try {
+            // Capture current list of creeps
+            const creeps = Object.values(Game.creeps);
             if (wasm_module) {
-                wasm_module.loop();
+                wasm_module.loop(creeps);
             } else {
                 // attempt to load the wasm only if there's enough bucket to do a bunch of work this tick
                 if (Game.cpu.bucket < 750) {
@@ -49,7 +51,7 @@ module.exports.loop = function () {
                 // load the wasm instance!
                 wasm_module.initialize_instance();
                 // go ahead and run the loop for its first tick
-                wasm_module.loop();
+                wasm_module.loop(creeps);
             }
         } catch (error) {
             console.error("caught exception:", error);
