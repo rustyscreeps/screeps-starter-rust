@@ -11,6 +11,7 @@ crate-type = ["cdylib", "rlib"]
 js-sys = "0.3"
 log = "0.4"
 fern = "0.6"
+html-escape = "0.2"
 screeps-game-api = "0.21"
 # If you'd like to use a locally-cloned out version of the game API crate
 # (for testing PRs, etc), you can use a local path (replacing the above line):
@@ -30,14 +31,14 @@ lto = true
 # Replace the following to enable wasm-opt optimization
 # wasm-pack will try to install wasm-opt automatically, but it must be installed by hand on some
 # operating systems.
-wasm-opt = false
+#wasm-opt = false
 # See wasm-opt for full available options; handy examples:
 # -O4 - optimize aggressively for performance
 # -Oz - optimize aggressively for code size
 # -g - leave debug info in place, allowing for more descriptive stack traces on panic
 # --disable-sign-ext - prevents opcodes that the screeps servers can't load (see 
 # https://github.com/rustyscreeps/screeps-game-api/issues/391)
-#wasm-opt = ["-O4", "--disable-sign-ext"]
+wasm-opt = ["-O4", "--signext-lowering"]
 
 [features]
 default = []
