@@ -27,17 +27,13 @@ opt-level = 3
 lto = true
 
 [package.metadata.wasm-pack.profile.release]
-# Replace the following to enable wasm-opt optimization
-# wasm-pack will try to install wasm-opt automatically, but it must be installed by hand on some
-# operating systems.
-wasm-opt = false
 # See wasm-opt for full available options; handy examples:
 # -O4 - optimize aggressively for performance
 # -Oz - optimize aggressively for code size
 # -g - leave debug info in place, allowing for more descriptive stack traces on panic
-# --disable-sign-ext - prevents opcodes that the screeps servers can't load (see 
+# --signext-lowering - removes opcodes that the screeps servers can't load (see 
 # https://github.com/rustyscreeps/screeps-game-api/issues/391)
-#wasm-opt = ["-O4", "--disable-sign-ext"]
+wasm-opt = ["-O4", "--signext-lowering"]
 
 [features]
 default = []

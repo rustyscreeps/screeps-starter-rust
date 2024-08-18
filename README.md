@@ -17,8 +17,20 @@ apis are broken).
 Quickstart:
 
 ```sh
-# Install CLI dependency:
-cargo install cargo-screeps
+# Install rustup: https://rustup.rs/
+
+# Install wasm-pack
+cargo install wasm-pack
+
+# Install wasm-opt
+cargo install wasm-opt
+
+# Install nvm: https://github.com/nvm-sh/nvm
+# (Windows: https://github.com/coreybutler/nvm-windows)
+
+# Install node at version 20 (16 to 21 tested ok, IIRC)
+nvm install 20
+nvm use 20
 
 # Clone the starter
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
@@ -26,15 +38,20 @@ cd screeps-starter-rust
 # note: if you customize the name of the crate, you'll need to update the MODULE_NAME
 # variable in the javascript/main.js file with the updated name
 
+# Install node deps
+npm install
+
 # Copy the example config, and set up at least one deployment mode.
 # Configure credentials if you'd like to upload directly, or a directory to copy to
 # if you'd prefer to use the game client to deploy:
-cp example-screeps.toml screeps.toml
-nano screeps.toml
+cp .example-screeps.yaml .screeps.yaml
+nano .screeps.yaml
 
-# Compile plus deploy to the configured 'upload' mode; any section name you
-# set up in your screeps.toml for different environments and servers can be used
-cargo screeps deploy -m upload
+# compile for a configured server but don't upload
+npm run deploy -- --server ptr --dryrun
+
+# compile and deploy to a configured server
+npm run deploy -- --server mmo
 ```
 
 [screeps]: https://screeps.com/

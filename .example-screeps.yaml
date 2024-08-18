@@ -1,0 +1,50 @@
+servers:
+  # Deploy to the main MMO server - note that tokens are
+  # the only supported auth method for official servers (mmo, season, and ptr)
+  mmo:
+    host: screeps.com
+    secure: true
+    token: your-auth-token-here
+    branch: default
+  # The public test realm can be a good place to test your code
+  ptr:
+    host: screeps.com
+    secure: true
+    token: your-auth-token-here
+    path: /ptr
+    branch: default
+  # Seasonal server configuration - this environment has unique mechanics each
+  # season, so it might make sense to have feature flag(s) for different mechanics
+  season:
+    host: screeps.com
+    secure: true
+    token: your-auth-token-here
+    path: /season
+    branch: default
+  private-server:
+    host: 127.0.0.1
+    port: 21025
+    secure: false
+    username: user
+    password: password
+    branch: default
+configs:
+  # Whether to minify generated javascript for each configured server
+  terser:
+    # The special '*'' key sets a default for all servers which
+    # will be **overridden** by an applicable per-server config
+    '*': false
+    ptr: false
+    localhost: false
+  # Additional options to pass to wasm-pack to customize the build for each server
+  wasm-pack-options:
+    # The special '*'' key sets flags applied to all servers, which
+    # will be **concatenated** with any applicable per-server config
+    '*': []
+    # This setting enables the `mmo` crate feature for these destinations,
+    # which enables the API functions for intershard communication and pixel
+    # generation, which are specific to MMO
+    mmo: ["--features", "mmo"]
+    ptr: ["--features", "mmo"]
+    # Other servers can each have their own build flags, including crate features:
+    #season: ["--features", "my-season-7-feature"]
