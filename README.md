@@ -4,17 +4,16 @@ Starter Rust AI for [Screeps: World][screeps], the JavaScript-based MMO game.
 
 This uses the [`screeps-game-api`] bindings from the [rustyscreeps] organization.
 
-While it's possible to compile using [`wasm-pack`] directly using the Node.js target,
-some modifications are needed to load the output within the Screep environment, so it's
-recommended to use [`cargo-screeps`] for building and deploying your code.
+[`wasm-pack`] is used for building the Rust code to WebAssembly. This example uses [Rollup] to
+bundle the resulting javascript, [Babel] to transpile generated code for compatibility with older
+Node.js versions running on the Screeps servers, and the [`screeps-api`] Node.js package to deploy.
 
-The documentation is currently a bit sparse. API docs which list functions one
-can use are located at https://docs.rs/screeps-game-api/.
+Documentation for the Rust version of the game APIs is at https://docs.rs/screeps-game-api/.
 
 Almost all crates on https://crates.io/ are usable (only things which interact with OS
 apis are broken).
 
-Quickstart:
+## Quickstart:
 
 ```sh
 # Install rustup: https://rustup.rs/
@@ -54,8 +53,33 @@ npm run deploy -- --server ptr --dryrun
 npm run deploy -- --server mmo
 ```
 
+## Migration to 0.22
+
+Versions of [`screeps-game-api`] at 0.22 or higher are no longer compatible with the
+[`cargo-screeps`] tool for building and deployment; the transpilation step being handled
+by Babel is required to generate code that the game servers can load.
+
+To migrate an existing bot to using the new Javascript translation layer and deploy script:
+
+- Create a `.screeps.yaml` with the relevant settings from your `screeps.toml` file applied to the
+  new `.example-screeps.yaml` example file in this repo. Add it to your `.gitignore`, as well as 
+  entries for the `node_modules` directory and the `dist` directory.
+- Create a `package.json` copied from the one in this repo and make appropriate customizations.
+- Install the node dependencies from the quickstart steps above, then run `npm install` from within
+  the directory to install the required packages.
+- Copy the deploy script over to a `js_tools` directory, fix name in the file
+  (todo would be nice to not have hardcoded).
+- Add `main.js` to a `js_src` directory, either moved from your exist and updated, or freshly
+  copied. If updating, you'll need to change:
+  - Import formatting, particularly for the wasm module.
+  - wasm module initialization has changed, requiring two calls to first compile the module,
+    then to initialize the instance of the module.
+- Run `npm run deploy -- --server ptr --dryrun` to compile for PTR, remove the `--dryrun` to deploy
+
 [screeps]: https://screeps.com/
 [`wasm-pack`]: https://rustwasm.github.io/wasm-pack/
-[`cargo-screeps`]: https://github.com/rustyscreeps/cargo-screeps/
+[Rollup]: https://rollupjs.org/
+[Babel]: https://babeljs.io/
 [`screeps-game-api`]: https://github.com/rustyscreeps/screeps-game-api/
+[`cargo-screeps`]: https://github.com/rustyscreeps/cargo-screeps/
 [rustyscreeps]: https://github.com/rustyscreeps/
