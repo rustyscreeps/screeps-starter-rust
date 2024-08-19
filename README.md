@@ -57,7 +57,7 @@ npm run deploy -- --server mmo
 
 Versions of [`screeps-game-api`] at 0.22 or higher are no longer compatible with the
 [`cargo-screeps`] tool for building and deployment; the transpilation step being handled
-by Babel is required to generate code that the game servers can load.
+by [Babel] is required to generate code that the game servers can load.
 
 To migrate an existing bot to using the new Javascript translation layer and deploy script:
 
@@ -80,6 +80,7 @@ To migrate an existing bot to using the new Javascript translation layer and dep
 [`wasm-pack`]: https://rustwasm.github.io/wasm-pack/
 [Rollup]: https://rollupjs.org/
 [Babel]: https://babeljs.io/
+[`screeps-api`]: https://github.com/screepers/node-screeps-api
 [`screeps-game-api`]: https://github.com/rustyscreeps/screeps-game-api/
 [`cargo-screeps`]: https://github.com/rustyscreeps/cargo-screeps/
 [rustyscreeps]: https://github.com/rustyscreeps/
