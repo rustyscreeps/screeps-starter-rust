@@ -62,15 +62,15 @@ by Babel is required to generate code that the game servers can load.
 To migrate an existing bot to using the new Javascript translation layer and deploy script:
 
 - Create a `.screeps.yaml` with the relevant settings from your `screeps.toml` file applied to the
-  new `.example-screeps.yaml` example file in this repo. Add it to your `.gitignore`, as well as 
-  entries for the `node_modules` directory and the `dist` directory.
+  new `.example-screeps.yaml` example file in this repo.
+- Add to your `.gitignore`: `.screeps.yaml`, `node_modules`, and `dist`
 - Create a `package.json` copied from the one in this repo and make appropriate customizations.
 - Install the node dependencies from the quickstart steps above, then run `npm install` from within
-  the directory to install the required packages.
-- Copy the deploy script over to a `js_tools` directory, fix name in the file
+  the bot directory to install the required packages.
+- Copy the `deploy.js` script over to a `js_tools` directory, fix name in the file
   (todo would be nice to not have hardcoded).
-- Add `main.js` to a `js_src` directory, either moved from your exist and updated, or freshly
-  copied. If updating, you'll need to change:
+- Add `main.js` to a `js_src` directory, either moved from your existing `javascript` dir and updated,
+  or freshly copied. If updating, you'll need to change:
   - Import formatting, particularly for the wasm module.
   - wasm module initialization has changed, requiring two calls to first compile the module,
     then to initialize the instance of the module.
