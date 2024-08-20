@@ -74,6 +74,7 @@ To migrate an existing bot to using the new Javascript translation layer and dep
   - Import formatting, particularly for the wasm module.
   - wasm module initialization has changed, requiring two calls to first compile the module,
     then to initialize the instance of the module.
+- Update your `Cargo.toml` with version `0.22` for `screeps-game-api`
 - Run `npm run deploy -- --server ptr --dryrun` to compile for PTR, remove the `--dryrun` to deploy
 
 [screeps]: https://screeps.com/
