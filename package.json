@@ -13,8 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/rustyscreeps/screeps-starter-rust.git"
   },
-  "author": "Shane Madden",
-  "license": "MIT",
+  "author": "",
   "bugs": {
     "url": "https://github.com/rustyscreeps/screeps-starter-rust/issues"
   },

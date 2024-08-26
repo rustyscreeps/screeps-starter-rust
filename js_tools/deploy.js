@@ -24,7 +24,7 @@ const argv = require('yargs')
   })
   .argv;
 
-const package_name_underscore = process.env.npm_package_name.replace("-", "_");
+const package_name_underscore = process.env.npm_package_name.replace(/\-/g, "_");
 
 // load configuration from .screeps.yaml
 // unified config format:
