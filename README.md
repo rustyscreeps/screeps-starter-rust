@@ -29,7 +29,7 @@ cargo install wasm-opt
 # Mac/Linux: https://github.com/nvm-sh/nvm
 # Windows: https://github.com/coreybutler/nvm-windows
 
-# Installs node at version 22
+# Installs Node.js at version 22
 nvm install 22
 nvm use 22
 
@@ -39,12 +39,10 @@ cd screeps-starter-rust
 # note: if you customize the name of the crate, you'll need to update the MODULE_NAME
 # variable in the javascript/main.js file and the module import with the updated name
 
-# Install node deps
+# Install dependencies for JS build
 npm install
 
 # Copy the example config, and set up at least one deployment mode.
-# Configure credentials if you'd like to upload directly, or a directory to copy to
-# if you'd prefer to use the game client to deploy:
 cp .example-screeps.yaml .screeps.yaml
 nano .screeps.yaml
 
