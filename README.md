@@ -37,7 +37,8 @@ nvm use 22
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
 # note: if you customize the name of the crate, you'll need to update the MODULE_NAME
-# variable in the js_src/main.js file and the module import with the updated name
+# variable in the js_src/main.js file and the module import with the updated name, as well
+# as the "name" in the package.json
 
 # Install dependencies for JS build
 npm install
