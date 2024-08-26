@@ -67,10 +67,9 @@ To migrate an existing bot to using the new Javascript translation layer and dep
 - Create a `package.json` copied from the one in this repo and make appropriate customizations.
 - Install the node dependencies from the quickstart steps above, then run `npm install` from within
   the bot directory to install the required packages.
-- Copy the `deploy.js` script over to a `js_tools` directory, fix name in the file
-  (todo would be nice to not have hardcoded).
-- Add `main.js` to a `js_src` directory, either moved from your existing `javascript` dir and updated,
-  or freshly copied. If updating, you'll need to change:
+- Copy the `deploy.js` script over to a new `js_tools` directory.
+- Add `main.js` to a new `js_src` directory, either moved from your existing `javascript` dir and
+  updated, or freshly copied. If updating, you'll need to change:
   - Import formatting, particularly for the wasm module.
   - wasm module initialization has changed, requiring two calls to first compile the module,
     then to initialize the instance of the module.
