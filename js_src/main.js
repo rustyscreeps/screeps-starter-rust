@@ -4,6 +4,7 @@ import 'fastestsmallesttextencoderdecoder-encodeinto/EncoderDecoderTogether.min.
 import * as bot from '../pkg/screeps_starter_rust.js';
 // replace this with the name of your module
 const MODULE_NAME = "screeps_starter_rust";
+const BUCKET_BOOT_THRESHOLD = 1500;
 
 // This provides the function `console.error` that wasm_bindgen sometimes expects to exist,
 // especially with type checks in debug mode. An alternative is to have this be `function () {}`
@@ -24,10 +25,6 @@ function console_error() {
     console.log("ERROR:", processedArgs);
     Game.notify(processedArgs);
 }
-
-let halt_next_tick = false;
-
-const BUCKET_BOOT_THRESHOLD = 1500;
 
 // track whether running wasm loop for each tick completes, to detect errors or aborted execution
 let running = false;
