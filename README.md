@@ -37,7 +37,7 @@ nvm use 22
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
 # note: if you customize the name of the crate, you'll need to update the MODULE_NAME
-# variable in the javascript/main.js file and the module import with the updated name
+# variable in the js_src/main.js file and the module import with the updated name
 
 # Install dependencies for JS build
 npm install
@@ -59,7 +59,7 @@ Versions of [`screeps-game-api`] at 0.22 or higher are no longer compatible with
 [`cargo-screeps`] tool for building and deployment; the transpile step being handled by [Babel] is
 required to transform the generated JS into code that the game servers can load.
 
-To migrate an existing bot to using the new Javascript translation layer and deploy script:
+To migrate an existing bot to using the new JavaScript translation layer and deploy script:
 
 - Create a `.screeps.yaml` with the relevant settings from your `screeps.toml` file applied to the
   new `.example-screeps.yaml` example file in this repo.
