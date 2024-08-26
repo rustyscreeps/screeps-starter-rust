@@ -24,6 +24,8 @@ const argv = require('yargs')
   })
   .argv;
 
+const package_name_underscore = process.env.npm_package_name.replace("-", "_");
+
 // load configuration from .screeps.yaml
 // unified config format:
 // https://github.com/screepers/screepers-standards/blob/master/SS3-Unified_Credentials_File.md
@@ -89,11 +91,14 @@ async function run_rollup(use_terser) {
         presets: ['@babel/preset-env'],
         targets: {
           "node": 12,
-        }
+        },
       }),
       copy({
-        // todo, should figure out a better way to get the name
-        targets: [{ src: 'pkg/screeps_starter_rust_bg.wasm', dest: 'dist', rename: 'screeps_starter_rust.wasm' }]
+        targets: [{
+          src: `pkg/${package_name_underscore}_bg.wasm`,
+          dest: 'dist',
+          rename: `${package_name_underscore}.wasm`,
+        }]
       }),
     ]
   });
