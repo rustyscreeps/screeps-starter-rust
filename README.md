@@ -49,7 +49,7 @@ nano .screeps.yaml
 # compile for a configured server but don't upload
 npm run deploy -- --server ptr --dryrun
 
-# compile and deploy to a configured server
+# compile and upload to a configured server
 npm run deploy -- --server mmo
 ```
 
