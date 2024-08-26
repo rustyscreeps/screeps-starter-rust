@@ -24,18 +24,20 @@ cargo install wasm-pack
 # Install wasm-opt
 cargo install wasm-opt
 
-# Install nvm: https://github.com/nvm-sh/nvm
-# (Windows: https://github.com/coreybutler/nvm-windows)
+# Install Node.js for build steps - versions 16 through 22 have been tested, any should work
+# nvm is recommended but not required to manage the install, follow instructions at:
+# Mac/Linux: https://github.com/nvm-sh/nvm
+# Windows: https://github.com/coreybutler/nvm-windows
 
-# Install node at version 20 (16 to 21 tested ok, IIRC)
-nvm install 20
-nvm use 20
+# Installs node at version 22
+nvm install 22
+nvm use 22
 
 # Clone the starter
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
 cd screeps-starter-rust
 # note: if you customize the name of the crate, you'll need to update the MODULE_NAME
-# variable in the javascript/main.js file with the updated name
+# variable in the javascript/main.js file and the module import with the updated name
 
 # Install node deps
 npm install
@@ -69,7 +71,7 @@ To migrate an existing bot to using the new Javascript translation layer and dep
   the bot directory to install the required packages.
 - Copy the `deploy.js` script over to a new `js_tools` directory.
 - Add `main.js` to a new `js_src` directory, either moved from your existing `javascript` dir and
-  updated, or freshly copied. If updating, you'll need to change:
+  updated,or freshly copied. If updating, you'll need to change:
   - Import formatting, particularly for the wasm module.
   - wasm module initialization has changed, requiring two calls to first compile the module,
     then to initialize the instance of the module.
