@@ -56,8 +56,8 @@ npm run deploy -- --server mmo
 ## Migration to 0.22
 
 Versions of [`screeps-game-api`] at 0.22 or higher are no longer compatible with the
-[`cargo-screeps`] tool for building and deployment; the transpilation step being handled
-by [Babel] is required to generate code that the game servers can load.
+[`cargo-screeps`] tool for building and deployment; the transpile step being handled by [Babel] is
+required to transform the generated JS into code that the game servers can load.
 
 To migrate an existing bot to using the new Javascript translation layer and deploy script:
 
