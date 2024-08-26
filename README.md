@@ -65,8 +65,8 @@ To migrate an existing bot to using the new JavaScript translation layer and dep
   new `.example-screeps.yaml` example file in this repo.
 - Add to your `.gitignore`: `.screeps.yaml`, `node_modules`, and `dist`
 - Create a `package.json` copied from the one in this repo and make appropriate customizations.
-- Install the node dependencies from the quickstart steps above, then run `npm install` from within
-  the bot directory to install the required packages.
+- Install Node.js (from the quickstart steps above), then run `npm install` from within the bot
+  directory to install the required packages.
 - Copy the `deploy.js` script over to a new `js_tools` directory.
 - Add `main.js` to a new `js_src` directory, either moved from your existing `javascript` dir and
   updated, or freshly copied. If updating, you'll need to change:
