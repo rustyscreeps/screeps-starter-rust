@@ -1,6 +1,12 @@
 # Compiled source #
 ###################
 target
+dist
+pkg
+
+# Dependencies #
+################
+node_modules
 
 # Packages #
 ############
@@ -33,4 +39,7 @@ nbproject
 *.iws
 *.sublime-project
 *.sublime-workspace
-screeps.toml
+
+# Config w/ secrets #
+#####################
+.screeps.yaml
