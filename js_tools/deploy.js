@@ -75,8 +75,8 @@ async function output_clean() {
 
 // invoke wasm-pack, compiling the wasm module into the pkg directory
 function run_wasm_pack(extra_options) {
-  let args = ['run', 'nightly', 'wasm-pack', 'build', '--target', 'web', '--release', '.', ...extra_options];
-  spawnSync('rustup', args, { stdio: 'inherit' })
+  let args = ['build', '--target', 'web', '--release', '.', ...extra_options];
+  spawnSync('wasm-pack', args, { stdio: 'inherit' })
 }
 
 // run the rollup bundler on the main.js file, outputting the results to the dist directory
