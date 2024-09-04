@@ -76,7 +76,7 @@ async function output_clean() {
 // invoke wasm-pack, compiling the wasm module into the pkg directory
 function run_wasm_pack(extra_options) {
   let args = ['build', '--target', 'web', '--release', '.', ...extra_options];
-  spawnSync('wasm-pack', args, { stdio: 'inherit' })
+  return spawnSync('wasm-pack', args, { stdio: 'inherit' })
 }
 
 // run the rollup bundler on the main.js file, outputting the results to the dist directory
@@ -157,7 +157,10 @@ async function run() {
     return
   }
   await output_clean();
-  await run_wasm_pack(config.extra_options);
+  const build_result = await run_wasm_pack(config.extra_options);
+  if (build_result.status !== 0) {
+    return
+  }
   await run_rollup(config.use_terser);
   const code = load_built_code();
   await upload(code, argv.server, config.branch, argv.dryrun);
