@@ -29,9 +29,11 @@ cargo install wasm-opt
 # Mac/Linux: https://github.com/nvm-sh/nvm
 # Windows: https://github.com/coreybutler/nvm-windows
 
-# Installs Node.js at version 22
-nvm install 22
-nvm use 22
+# Installs Node.js at version 20
+# (all versions within LTS support should work;
+# 20 is recommended due to some observed problems on Windows systems using 22)
+nvm install 20
+nvm use 20
 
 # Clone the starter
 git clone https://github.com/rustyscreeps/screeps-starter-rust.git
