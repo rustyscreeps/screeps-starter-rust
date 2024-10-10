@@ -40,11 +40,18 @@ configs:
   wasm-pack-options:
     # The special '*'' key sets flags applied to all servers, which
     # will be **concatenated** with any applicable per-server config
-    '*': []
+
+    # These settings cause the target wasm feature set to exclude newer features not present on Screeps'
+    # Node.js version.
+    '*': ["--config", "build.rustflags=['-Ctarget-cpu=mvp']", "-Z", "build-std=std,panic_abort"]
+    # Alternatively, individual problematic features can be disabled:
+    #'*': ["--config", "build.rustflags=['-Ctarget-feature=-reference-types','-Ctarget-feature=-multivalue','-Ctarget-feature=-sign-ext']", "-Z", "build-std=std,panic_abort"]
+
     # This setting enables the `mmo` crate feature for these destinations,
     # which enables the API functions for intershard communication and pixel
     # generation, which are specific to MMO
     mmo: ["--features", "mmo"]
     ptr: ["--features", "mmo"]
+
     # Other servers can each have their own build flags, including crate features:
     #season: ["--features", "my-season-7-feature"]
