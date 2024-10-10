@@ -62,9 +62,6 @@ let wasm_bytes, wasm_module, wasm_instance;
 module.exports.loop = function() {
     // need to freshly override the fake console object each tick
     console.error = console_error;
-    // temporarily need to polyfill this too because there's a bug causing the warn
-    // in initSync to fire in bindgen 0.2.93
-    console.warn = console.log;
 
     // attempt to load the wasm only if there's lots of bucket
     if (Game.cpu.bucket < BUCKET_BOOT_THRESHOLD) {
@@ -75,7 +72,7 @@ module.exports.loop = function() {
     // run each step of the load process, saving each result so that this can happen over multiple ticks
     if (!wasm_bytes) wasm_bytes = require(MODULE_NAME);
     if (!wasm_module) wasm_module = new WebAssembly.Module(wasm_bytes);
-    if (!wasm_instance) wasm_instance = bot.initSync(wasm_module);
+    if (!wasm_instance) wasm_instance = bot.initSync({ module: wasm_module });
 
     // remove the bytes from the heap and require cache, we don't need 'em anymore
     wasm_bytes = null;
