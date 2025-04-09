@@ -6,7 +6,8 @@ use std::{
 use js_sys::{JsString, Object, Reflect};
 use log::*;
 use screeps::{
-    constants::{ErrorCode, Part, ResourceType},
+    action_error_codes::*,
+    constants::{Part, ResourceType},
     enums::StructureObject,
     find, game,
     local::ObjectId,
@@ -122,7 +123,7 @@ fn run_creep(creep: &Creep, creep_targets: &mut HashMap<String, CreepTarget>) {
                         creep
                             .upgrade_controller(&controller)
                             .unwrap_or_else(|e| match e {
-                                ErrorCode::NotInRange => {
+                                UpgradeControllerErrorCode::NotInRange => {
                                     let _ = creep.move_to(&controller);
                                 }
                                 _ => {
