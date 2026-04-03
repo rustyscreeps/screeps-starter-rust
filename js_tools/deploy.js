@@ -90,7 +90,7 @@ async function run_rollup(use_terser) {
         babelHelpers: 'bundled',
         presets: ['@babel/preset-env'],
         targets: {
-          "node": 12,
+          "node": 24,
         },
       }),
       copy({

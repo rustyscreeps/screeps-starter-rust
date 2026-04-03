@@ -31,9 +31,7 @@ lto = true
 # -O4 - optimize aggressively for performance
 # -Oz - optimize aggressively for code size
 # -g - leave debug info in place, allowing for more descriptive stack traces on panic
-# --signext-lowering - removes opcodes that the screeps servers can't load (see 
-# https://github.com/rustyscreeps/screeps-game-api/issues/391)
-wasm-opt = ["-O4", "--signext-lowering"]
+wasm-opt = ["-O4"]
 
 [features]
 default = []
