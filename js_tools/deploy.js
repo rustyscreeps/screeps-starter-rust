@@ -75,6 +75,7 @@ async function output_clean() {
 
 // invoke wasm-pack, compiling the wasm module into the pkg directory
 function run_wasm_pack(extra_options) {
+  console.log("running wasm-pack...");
   let args = ['build', '--target', 'web', '--release', '.', ...extra_options];
   return spawnSync('wasm-pack', args, { stdio: 'inherit' })
 }
