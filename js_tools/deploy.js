@@ -10,8 +10,8 @@ const copy = require('rollup-plugin-copy');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const terser = require('@rollup/plugin-terser');
 
-const { ScreepsAPI } = require('screeps-api');
-const yaml = require('yamljs');
+const { ScreepsHttpClient } = require('screeps-api');
+const yaml = require('yaml');
 const argv = require('yargs')
   .option('server', {
     describe: 'server to connect to; must be defined in .screeps.yaml servers section',
@@ -146,8 +146,11 @@ async function upload(code, server, branch, dryrun) {
     console.log(`Not uploading due to --dryrun; would use ${usage_string}`);
   } else {
     console.log(`Uploading to branch ${branch}; using ${usage_string}`);
-    const api = await ScreepsAPI.fromConfig(server);
-    const response = await api.code.set(branch, code.modules);
+    const api = await ScreepsHttpClient.fromConfig(server);
+    const response = await api.userCodeSet({
+      branch: branch,
+      modules: code.modules
+    });
     console.log(JSON.stringify(response));
   }
 }
